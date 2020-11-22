@@ -8,7 +8,7 @@ fr = tk.Frame(root)
 root.geometry('1200x600')
 canv = tk.Canvas(root, bg='white')
 canv.pack(fill=tk.BOTH, expand=1)
-g = 3  # что-то вроде усксорения свободного падения
+g = 2.8  # что-то вроде усксорения свободного падения
 kv = 0.7  # коэффициент начальной скорости шара
 start_r = 45  # start_r и sub_r служат для изменения параметров цели со временем
 sub_r = 0
@@ -19,7 +19,7 @@ canv_points = canv.create_text(50, 50, text=points, font=("impact", 44))
 
 class Ball:
     def __init__(self, x=40, y=450):
-        """ Конструктор класса Ball
+        """ Конструктор класса снарядов
 
         Args:
         x - начальное положение мяча по горизонтали
@@ -35,18 +35,29 @@ class Ball:
         global colors
         self.x = x
         self.y = y
+        self.type = choice(['circle', 'square'])
         self.r = 5
         self.vx = 0
         self.vy = 0
         self.color = choice(colors)
-        self.id = canv.create_oval(
+        if self.type == 'circle':
+            self.id = canv.create_oval(
                 self.x - self.r,
                 self.y - self.r,
                 self.x + self.r,
                 self.y + self.r,
                 fill=self.color
-        )
+            )
+        else:
+            self.id = canv.create_rectangle(
+                self.x - self.r,
+                self.y - self.r,
+                self.x + self.r,
+                self.y + self.r,
+                fill=self.color
+            )
         self.live = 50
+
 
     def set_coords(self):
         canv.coords(
@@ -135,7 +146,7 @@ class Gun:
 
         Происходит при отпускании кнопки мыши.
         Начальные значения компонент скорости мяча vx и vy зависят от положения мыши.
-        balls - список всех мячей
+        balls - список всех снарядов
         bullet_1 - счет мячей на первую цель(обнуляется после попадания)
         bullet_2 - счет мячей на вторую цель(обнуляется после попадания)
         kv - коэффициент начальной скорости шара
@@ -181,7 +192,7 @@ class Target:
         points - баллов получено за эту цель
         live
         id -
-        id_points - 
+        id_points -
         vx - начальная скорость мяча по горизонтали
         vy - начальная скорость мяча по вертикали
         time - параметр для колебаний цели
@@ -197,7 +208,7 @@ class Target:
         self.is_hitted = False
 
     def new_target(self):
-        """ Инициализация новой цели. 
+        """ Инициализация новой цели.
         x - координата по горизонтали. Случайная.
         y - координата по вертикали. Случайная.
         r - радиус. Случайный, но зависит от глобальных start_r, sub_r
@@ -225,7 +236,7 @@ class Target:
         canv.coords(self.id, -10, -10, -10, -10)
         points += pointss
         canv.itemconfig(canv_points, text=points)
-        start_r -= 3
+        start_r -= 4
         if start_r <= 0:
             start_r = 5
         sub_r += 4
